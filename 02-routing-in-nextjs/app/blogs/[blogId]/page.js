@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { notFound } from "next/navigation";
 
 export async function generateMetadata({ params }) {
   const { blogId } = await params;
@@ -10,6 +11,10 @@ export async function generateMetadata({ params }) {
 export default async function page({ params }) {
   console.log(await params);
   const { blogId } = await params;
+
+  if (!/^\d+$/.test(blogId)) {
+    notFound();
+  }
 
   return (
     <div className="font-mono p-12">
