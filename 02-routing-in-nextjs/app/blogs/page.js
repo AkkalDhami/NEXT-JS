@@ -1,6 +1,10 @@
 import Link from "next/link";
 import React from "react";
 
+export const metadata = {
+  title: "Blogs ",
+};
+
 export default async function page() {
   return (
     <div className="font-mono p-12">

@@ -1,5 +1,11 @@
 import Link from "next/link";
-import React from "react";
+
+export const metadata = {
+  title: {
+    absolute: "File Page",
+    template: "File | %s",
+  },
+};
 
 export default async function page({ params }) {
   const { filePath } = await params;

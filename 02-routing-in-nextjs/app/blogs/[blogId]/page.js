@@ -1,5 +1,11 @@
 import Link from "next/link";
-import React from "react";
+
+export async function generateMetadata({ params }) {
+  const { blogId } = await params;
+  return {
+    title: `Blog | ${blogId}`,
+  };
+}
 
 export default async function page({ params }) {
   console.log(await params);
@@ -14,7 +20,7 @@ export default async function page({ params }) {
           <Link
             href={`/blogs/${blogId}/comments`}
             className="text-blue-500 hover:underline">
-            Blog Comments 
+            Blog Comments
           </Link>
         </li>
       </ul>
