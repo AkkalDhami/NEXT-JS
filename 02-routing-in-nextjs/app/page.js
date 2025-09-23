@@ -9,7 +9,7 @@ export default function Home() {
 
       <div className="flex gap-4 mt-4  flex-col">
         <Link href="/about">About</Link>
-        <Link href="/blog">Blog</Link>
+        <Link href="/blogs">Blogs</Link>
         <Link href="/service">Service</Link>
       </div>
 
