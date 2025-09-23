@@ -11,6 +11,7 @@ export default function Home() {
         <Link href="/about">About</Link>
         <Link href="/blogs">Blogs</Link>
         <Link href="/service">Service</Link>
+        <Link href="/files">Files</Link>
       </div>
 
     </div>
