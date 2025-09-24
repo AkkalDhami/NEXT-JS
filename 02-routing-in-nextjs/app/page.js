@@ -19,6 +19,12 @@ export default function Home() {
         <Link href="/files" className="text-blue-500 hover:underline">
           Files
         </Link>
+        <Link href="/login" className="text-blue-500 hover:underline">
+          Login
+        </Link>
+        <Link href="/register" className="text-blue-500 hover:underline">
+          Register
+        </Link>
       </div>
     </div>
   );
