@@ -5,6 +5,12 @@ export const metadata = {
   title: "Blogs ",
 };
 
+export const dynamicParams = false;
+
+export function generateStaticParams() {
+  return [{ blogId: "1" }, { blogId: "2" }, { blogId: "3" }, { blogId: "4" }];
+}
+
 export default async function page() {
   return (
     <div className="font-mono p-12">
@@ -27,7 +33,6 @@ export default async function page() {
           </Link>
         </li>
       </ul>
-      
     </div>
   );
 }
