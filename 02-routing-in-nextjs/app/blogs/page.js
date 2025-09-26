@@ -5,12 +5,15 @@ export const metadata = {
   title: "Blogs ",
 };
 
+// ISR
 export const dynamicParams = false;
-export const revalidate = 5;
 
-export function generateStaticParams() {
-  return [{ blogId: "1" }, { blogId: "2" }, { blogId: "3" }, { blogId: "4" }];
-}
+// export const revalidate = 5;
+
+// SSG
+// export function generateStaticParams() {
+//   return [{ blogId: "1" }, { blogId: "2" }, { blogId: "3" }, { blogId: "4" }];
+// }
 
 export default async function page() {
   return (
