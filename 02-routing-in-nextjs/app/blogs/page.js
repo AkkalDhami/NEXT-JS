@@ -1,5 +1,8 @@
+import Comments from "@/components/Comments";
+import Likes from "@/components/Likes";
+import Views from "@/components/Views";
 import Link from "next/link";
-import React from "react";
+import React, { Suspense } from "react";
 
 export const metadata = {
   title: "Blogs ",
@@ -38,6 +41,18 @@ export default async function page() {
           </Link>
         </li>
       </ul>
+
+      <div>
+        <Suspense fallback={<div>Loading...</div>}>
+          <Views views={10} />
+        </Suspense>
+        <Suspense fallback={<div>Loading...</div>}>
+          <Likes likes={10} />
+        </Suspense>
+        <Suspense fallback={<div>Loading...</div>}>
+          <Comments comments={10} />
+        </Suspense>
+      </div>
     </div>
   );
 }
