@@ -10,6 +10,9 @@ export default function Home() {
         <Link href="/about" className="text-blue-500 hover:underline">
           About
         </Link>
+        <Link href="/todos" className="text-blue-500 hover:underline">
+          Todos
+        </Link>
         <Link href="/posts" className="text-blue-500 hover:underline">
           Posts
         </Link>
