@@ -1,4 +1,10 @@
+
+
 export default async function Page() {
+  const slowRes = await fetch("https://procodrr.vercel.app/?sleep=9000");
+  const slowData = await slowRes.json();
+  console.log(slowData);
+
   const res = await fetch(
     "https://jsonplaceholder.typicode.com/todos?_limit=10",
     {
@@ -8,7 +14,6 @@ export default async function Page() {
     }
   );
   const data = await res.json();
-
 
   return (
     <div className="font-mono p-12">
