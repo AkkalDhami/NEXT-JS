@@ -1,4 +1,5 @@
 import Comments from "@/components/Comments";
+import Header from "@/components/Header";
 import Likes from "@/components/Likes";
 import Views from "@/components/Views";
 import Link from "next/link";
@@ -21,6 +22,7 @@ export const dynamicParams = false;
 export default async function page() {
   return (
     <div className="font-mono p-12">
+      <Header />
       <h1> Blog Page</h1>
       <p>Welcome to the blog page. Select a blog to read more.</p>
       <h3>Date: {new Date().toLocaleString()}</h3>

@@ -3,6 +3,7 @@ import SlowRes2 from "@/components/SlowRes2";
 import TodoItems from "@/components/TodoItems";
 import { Suspense } from "react";
 import Loading from "./loading";
+import Header from "@/components/Header";
 
 async function fetchData(url) {
   const res = await fetch(url);
@@ -21,6 +22,7 @@ export default async function Page() {
   console.log(data1, data2, data3);
   return (
     <div className="font-mono p-12">
+      <Header />
       <h1 className="text-2xl mb-4">Posts Page</h1>
       <div className="mb-4 space-y-3">
         <Suspense fallback={<div>Loading res1...</div>}>

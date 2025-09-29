@@ -1,9 +1,11 @@
+import Header from "@/components/Header";
 import Image from "next/image";
 import Link from "next/link";
 
 export default function Home() {
   return (
     <div className="font-mono p-12">
+      <Header />
       <h1>Hello world</h1>
 
       <div className="flex gap-4 mt-4  flex-col">
