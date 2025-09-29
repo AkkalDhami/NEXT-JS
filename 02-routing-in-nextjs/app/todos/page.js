@@ -4,7 +4,21 @@ import TodoItems from "@/components/TodoItems";
 import { Suspense } from "react";
 import Loading from "./loading";
 
+async function fetchData(url) {
+  const res = await fetch(url);
+  const data = await res.json();
+  return data;
+}
+
+const urls = [
+  "https://jsonplaceholder.typicode.com/todos?_limit=10",
+  "https://procodrr.vercel.app/?sleep=2000",
+  "https://procodrr.vercel.app/?sleep=3000",
+];
+
 export default async function Page() {
+  const [data1, data2, data3] = await Promise.all(urls.map(fetchData));
+  console.log(data1, data2, data3);
   return (
     <div className="font-mono p-12">
       <h1 className="text-2xl mb-4">Posts Page</h1>
