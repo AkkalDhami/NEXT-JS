@@ -27,7 +27,7 @@ export default function Page() {
       <ul className="grid sm:grid-cols-4 gap-4">
         {posts.map(({ id, body, title }, i) => (
           <li key={id} className="w-full h-full">
-            <div className="mb-4 bg-zinc-900 hover:bg-zinc-800 duration-150 p-4 rounded-lg">
+            <div className="mb-4 dark:bg-zinc-900 dark:hover:bg-zinc-800 duration-150 p-4 rounded-lg">
               <h2 className="text-xl font-semibold line-clamp-1 text-zinc-100">
                 {title}
               </h2>

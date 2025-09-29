@@ -1,10 +1,7 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import ThemeProvider from "@/context/ThemeContext";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
@@ -23,8 +20,8 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} font-mono p-12 antialiased`}>
-        {children}
+        className={` ${geistMono.variable} bg-white text-black dark:bg-zinc-950 dark:text-white font-mono p-12 antialiased`}>
+        <ThemeProvider> {children}</ThemeProvider>
       </body>
     </html>
   );
