@@ -20,6 +20,11 @@ export const dynamicParams = false;
 // }
 
 export default async function page() {
+  const rand = Math.random();
+  console.log(rand);
+  if (rand > 0.5) {
+    throw new Error("Blog not found");
+  }
   return (
     <div className="font-mono p-12">
       <Header />

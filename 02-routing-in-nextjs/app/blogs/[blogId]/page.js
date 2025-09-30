@@ -14,11 +14,6 @@ export default async function page({ params }) {
   if (!/^\d+$/.test(blogId)) {
     notFound();
   }
-  const rand = Math.random();
-  console.log(rand);
-  if (rand > 0.5) {
-    throw new Error("Blog not found");
-  }
 
   return (
     <div className="font-mono p-12">
