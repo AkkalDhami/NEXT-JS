@@ -9,14 +9,14 @@ export async function generateMetadata({ params }) {
 }
 
 export default async function page({ params }) {
-  console.log(await params);
   const { blogId } = await params;
 
   if (!/^\d+$/.test(blogId)) {
     notFound();
   }
-
-  if (blogId > 4) {
+  const rand = Math.random();
+  console.log(rand);
+  if (rand > 0.5) {
     throw new Error("Blog not found");
   }
 
