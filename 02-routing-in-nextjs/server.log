@@ -1,0 +1,40 @@
+
+> 02-routing-in-nextjs@0.1.0 dev
+> next dev --turbopack
+
+   ▲ Next.js 15.5.3 (Turbopack)
+   - Local:        http://localhost:3000
+   - Network:      http://192.168.56.1:3000
+
+ ✓ Starting...
+ ✓ Ready in 1617ms
+ ○ Compiling /blogs/[blogId] ...
+ ✓ Compiled /blogs/[blogId] in 4.2s
+{ blogId: '5' }
+ ⨯ Error: Blog not found
+    at page (app\blogs\[blogId]\page.js:20:11)
+  18 |
+  19 |   if (blogId > 4) {
+> 20 |     throw new Error("Blog not found");
+     |           ^
+  21 |   }
+  22 |
+  23 |   return ( {
+  digest: '222091510'
+}
+ GET /blogs/5 500 in 5961ms
+ ✓ Compiled /favicon.ico in 298ms
+ GET /favicon.ico 200 in 692ms
+Terminate batch job (Y/N)? [?25h
+
+^C
+> 02-routing-in-nextjs@0.1.0 dev
+> next dev --turbopack
+
+   ▲ Next.js 15.5.3 (Turbopack)
+   - Local:        http://localhost:3000
+   - Network:      http://192.168.56.1:3000
+
+ ✓ Starting...
+ ✓ Ready in 1760ms
+Terminate batch job (Y/N)? [?25h

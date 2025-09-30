@@ -16,6 +16,10 @@ export default async function page({ params }) {
     notFound();
   }
 
+  if (blogId > 4) {
+    throw new Error("Blog not found");
+  }
+
   return (
     <div className="font-mono p-12">
       <h1>Blog Id: {blogId}</h1>
