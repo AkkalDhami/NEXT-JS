@@ -2,7 +2,6 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import ThemeProvider from "@/context/ThemeContext";
 
-
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
@@ -17,8 +16,13 @@ export const metadata = {
 };
 
 export default function RootLayout({ children }) {
+  const rand = Math.random();
+  console.log(rand);
+  if (rand > 0.5) {
+    throw new Error("Blog not found");
+  }
   return (
-    <html lang="en">
+    <html lang="en" className="dark">
       <body
         className={` ${geistMono.variable} bg-white text-black dark:bg-zinc-950 dark:text-white font-mono p-12 antialiased`}>
         <ThemeProvider> {children}</ThemeProvider>
