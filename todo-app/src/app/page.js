@@ -1,7 +1,5 @@
 "use client";
 
-import todosData from "../../todos.json";
-
 import { useEffect, useState } from "react";
 import TodoList from "@/components/TodoList";
 import TodoForm from "@/components/TodoForm";
@@ -9,7 +7,7 @@ import { useTheme } from "next-themes";
 import { MoonIcon, SunIcon } from "lucide-react";
 
 export default function Home() {
-  const [todos, setTodos] = useState(todosData);
+  const [todos, setTodos] = useState([]);
   const { theme = "dark", setTheme } = useTheme();
 
   useEffect(() => {
@@ -40,12 +38,12 @@ export default function Home() {
     await fetch(`/todos/${id}`, {
       method: "DELETE",
     });
-    setTodos(todos.filter((todo) => todo.id !== id));
+    setTodos(todos.filter((todo) => todo?._id !== id));
   };
 
   // Toggle todo completion
   const toggleTodo = async (id) => {
-    const todo = todos.find((todo) => todo.id === id);
+    const todo = todos.find((todo) => todo?._id === id);
     await fetch(`/todos/${id}`, {
       method: "PUT",
       headers: {
@@ -55,12 +53,12 @@ export default function Home() {
     });
     setTodos(
       todos.map((todo) =>
-        todo.id === id ? { ...todo, completed: !todo.completed } : todo
+        todo?._id === id ? { ...todo, completed: !todo.completed } : todo
       )
     );
   };
 
-  // Update todo text
+  // Update todo
   const updateTodo = async (id, newText) => {
     await fetch(`/todos/${id}`, {
       method: "PUT",
@@ -69,9 +67,6 @@ export default function Home() {
       },
       body: JSON.stringify({ text: newText }),
     });
-    setTodos(
-      todos.map((todo) => (todo.id === id ? { ...todo, text: newText } : todo))
-    );
   };
 
   return (

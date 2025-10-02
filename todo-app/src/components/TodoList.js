@@ -67,7 +67,7 @@ const TodoList = ({ todos, deleteTodo, toggleTodo, updateTodo }) => {
         <AnimatePresence>
           {filteredTodos.map((todo) => (
             <motion.li
-              key={todo.id}
+              key={todo?._id}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, height: 0, marginBottom: 0 }}

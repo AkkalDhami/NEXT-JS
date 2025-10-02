@@ -14,7 +14,7 @@ const TodoItem = ({ todo, deleteTodo, toggleTodo, updateTodo }) => {
 
   const handleSave = () => {
     if (editText.trim()) {
-      updateTodo(todo.id, editText.trim());
+      updateTodo(todo._id, editText.trim());
       setIsEditing(false);
     }
   };
@@ -39,7 +39,7 @@ const TodoItem = ({ todo, deleteTodo, toggleTodo, updateTodo }) => {
       }`}>
       <div className="flex items-center gap-3">
         <button
-          onClick={() => toggleTodo(todo.id)}
+          onClick={() => toggleTodo(todo?._id)}
           className={`flex justify-center items-center flex-shrink-0 w-5 h-5 rounded-md border transition-colors ${
             todo.completed
               ? "bg-primary border-primary"
@@ -98,7 +98,7 @@ const TodoItem = ({ todo, deleteTodo, toggleTodo, updateTodo }) => {
                 <PencilIcon className="w-4 h-4" />
               </button>
               <button
-                onClick={() => deleteTodo(todo.id)}
+                onClick={() => deleteTodo(todo?._id)}
                 className="p-1.5 rounded-md text-red-500 hover:bg-red-500/10 transition-colors"
                 aria-label="Delete todo">
                 <TrashIcon className="w-4 h-4" />
