@@ -16,11 +16,11 @@ export const metadata = {
 };
 
 export default function RootLayout({ children }) {
-  const rand = Math.random();
-  console.log(rand);
-  if (rand > 0.5) {
-    throw new Error("Blog not found");
-  }
+  // const rand = Math.random();
+  // console.log(rand);
+  // if (rand > 0.5) {
+  //   throw new Error("Blog not found");
+  // }
   return (
     <html lang="en" className="dark">
       <body

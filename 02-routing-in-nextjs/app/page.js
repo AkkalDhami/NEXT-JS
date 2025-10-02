@@ -3,7 +3,6 @@ import Image from "next/image";
 import Link from "next/link";
 
 export default function Home() {
-
   return (
     <div className="font-mono p-12">
       <Header />
@@ -35,6 +34,15 @@ export default function Home() {
           Register
         </Link>
       </div>
+
+      <Image
+        src="/home.png"
+        alt="Vercel Logo"
+        className="dark"
+        width={700}
+        height={700}
+        priority
+      />
     </div>
   );
 }
