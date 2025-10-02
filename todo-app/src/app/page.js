@@ -1,29 +1,38 @@
 "use client";
 
-import { useState } from "react";
+import todosData from "../../todos.json";
+
+import { useEffect, useState } from "react";
 import TodoList from "@/components/TodoList";
 import TodoForm from "@/components/TodoForm";
 import { useTheme } from "next-themes";
 import { MoonIcon, SunIcon } from "lucide-react";
 
-const todosData = [
-  { id: 1, text: "Learn Next.js 15", completed: false },
-  { id: 2, text: "Master Node.js", completed: true },
-  { id: 3, text: "Learn MongoDB", completed: true },
-];
-
 export default function Home() {
   const [todos, setTodos] = useState(todosData);
   const { theme = "dark", setTheme } = useTheme();
 
+  useEffect(() => {
+    fetchTodos();
+  }, []);
+
+  const fetchTodos = async () => {
+    const res = await fetch("/todos");
+    const data = await res.json();
+    setTodos(data.reverse());
+  };
+
   // Add new todo
-  const addTodo = (text) => {
-    const newTodo = {
-      id: Date.now().toString(),
-      text,
-      completed: false,
-    };
-    setTodos([newTodo, ...todos]);
+  const addTodo = async (text) => {
+    const res = await fetch("/todos", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ text }),
+    });
+    const data = await res.json();
+    setTodos([data, ...todos]);
   };
 
   // Delete todo

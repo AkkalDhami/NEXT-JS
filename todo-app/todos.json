@@ -3,5 +3,30 @@
         "id": "e905e810-8512-sadf-bad1-b1b0fa4c44cc",
         "completed": false,
         "text": "Learn TS"
+    },
+    {
+        "id": "dc3102b1-9f77-4a22-8375-e036b4e80854",
+        "completed": false,
+        "text": "Learn HTML"
+    },
+    {
+        "id": "1e1a4f1e-d268-4d20-844d-4715a74057e7",
+        "completed": false,
+        "text": "Learn JS"
+    },
+    {
+        "id": "3583da3c-f945-431a-b4eb-52d6d7b043b9",
+        "completed": false,
+        "text": "Learn React"
+    },
+    {
+        "id": "6101d4f2-7d0c-4e4f-ac5e-ba1778e9ff7d",
+        "completed": false,
+        "text": "sadfsadf"
+    },
+    {
+        "id": "227a93e4-18b1-43b7-8865-665840c50caf",
+        "completed": false,
+        "text": "asdf asdf"
     }
 ]
