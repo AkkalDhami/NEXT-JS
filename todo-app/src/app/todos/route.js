@@ -1,25 +1,22 @@
-import todos from "../../../todos.json";
-
-const { writeFile } = require("fs/promises");
-
-export function GET(req) {
-  return new Response(JSON.stringify(todos), {
-    headers: {
-      "Content-Type": "application/json",
-    },
-    status: 200,
-  });
+import { connectDB } from "@/lib/db";
+import Todo from "@/models/Todo";
+export async function GET(req) {
+  await connectDB();
+  const todos = await Todo.find();
+  return Response.json(todos);
 }
 
 export async function POST(req) {
+  await connectDB();
   const todo = await req.json();
-  const newTodo = {
-    id: crypto.randomUUID(),
-    completed: false,
-    ...todo,
-  };
-  todos.push(newTodo);
-  await writeFile("todos.json", JSON.stringify(todos, null, 4));
+
+  const newTodo = new Todo({
+    text: todo.text,
+    completed: todo.completed,
+  });
+
+  await newTodo.save();
+
   return Response.json({
     message: "Todo created successfully",
     todo: newTodo,
