@@ -1,7 +1,7 @@
 [
     {
         "id": "e905e810-8512-sadf-bad1-b1b0fa4c44cc",
-        "completed": false,
+        "completed": true,
         "text": "Learn TS"
     },
     {
@@ -16,17 +16,7 @@
     },
     {
         "id": "3583da3c-f945-431a-b4eb-52d6d7b043b9",
-        "completed": false,
-        "text": "Learn React"
-    },
-    {
-        "id": "6101d4f2-7d0c-4e4f-ac5e-ba1778e9ff7d",
-        "completed": false,
-        "text": "sadfsadf"
-    },
-    {
-        "id": "227a93e4-18b1-43b7-8865-665840c50caf",
-        "completed": false,
-        "text": "asdf asdf"
+        "completed": true,
+        "text": "Learn React.Js"
     }
 ]

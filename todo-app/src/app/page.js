@@ -36,12 +36,23 @@ export default function Home() {
   };
 
   // Delete todo
-  const deleteTodo = (id) => {
+  const deleteTodo = async (id) => {
+    await fetch(`/todos/${id}`, {
+      method: "DELETE",
+    });
     setTodos(todos.filter((todo) => todo.id !== id));
   };
 
   // Toggle todo completion
-  const toggleTodo = (id) => {
+  const toggleTodo = async (id) => {
+    const todo = todos.find((todo) => todo.id === id);
+    await fetch(`/todos/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ completed: !todo.completed }),
+    });
     setTodos(
       todos.map((todo) =>
         todo.id === id ? { ...todo, completed: !todo.completed } : todo
@@ -50,7 +61,14 @@ export default function Home() {
   };
 
   // Update todo text
-  const updateTodo = (id, newText) => {
+  const updateTodo = async (id, newText) => {
+    await fetch(`/todos/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ text: newText }),
+    });
     setTodos(
       todos.map((todo) => (todo.id === id ? { ...todo, text: newText } : todo))
     );
