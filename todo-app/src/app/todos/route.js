@@ -1,0 +1,12 @@
+import todosData from "../../../todos.json";
+
+export function GET() {
+  //   return Response.json(todosData);
+  console.log(todosData);
+  return new Response(JSON.stringify(todosData), {
+    headers: {
+      "Content-Type": "application/json",
+    },
+    status: 200,
+  });
+}
