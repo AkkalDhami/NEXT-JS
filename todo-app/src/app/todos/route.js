@@ -1,13 +1,28 @@
-import todosData from "../../../todos.json";
+import todos from "../../../todos.json";
+
+const { writeFile } = require("fs/promises");
 
 export function GET(req) {
-  console.log(req);
-  //   return Response.json(todosData);
-
-  return new Response(JSON.stringify(todosData), {
+  return new Response(JSON.stringify(todos), {
     headers: {
       "Content-Type": "application/json",
     },
     status: 200,
+  });
+}
+
+export async function POST(req) {
+  const todo = await req.json();
+  console.log(todo);
+  const newTodo = {
+    id: crypto.randomUUID(),
+    completed: false,
+    ...todo,
+  };
+  todos.push(newTodo);
+  await writeFile("todos.json", JSON.stringify(todos, null, 4));
+  return Response.json({
+    message: "Todo created successfully",
+    todo: newTodo,
   });
 }
