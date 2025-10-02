@@ -1,9 +1,10 @@
-import todosData from "../../../../todos.json";
+import todos from "../../../../todos.json";
+import { writeFile } from "fs/promises";
 
 export async function GET(_, { params }) {
   const { id } = await params;
 
-  const todo = todosData.find((todo) => todo.id === id);
+  const todo = todos.find((todo) => todo.id === id);
 
   if (!todo) {
     return new Response(JSON.stringify({ message: "Todo Not Found" }), {
@@ -20,4 +21,39 @@ export async function GET(_, { params }) {
     },
     status: 200,
   });
+}
+
+export async function PATCH(req, { params }) {
+  const { id } = await params;
+  const todoFromReq = await req.json();
+
+  if (todoFromReq.id) {
+    return new Response(JSON.stringify({ message: "Cannot update todo id" }), {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      status: 400,
+    });
+  }
+
+  const todoIndex = todos.findIndex((todo) => todo.id === id);
+
+  const newTodo = {
+    ...todos[todoIndex],
+    ...todoFromReq,
+  };
+  todos[todoIndex] = newTodo;
+  await writeFile("todos.json", JSON.stringify(todos, null, 4));
+  return new Response(
+    JSON.stringify({
+      message: "Todo updated successfully",
+      todo: newTodo,
+    }),
+    {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      status: 201,
+    }
+  );
 }

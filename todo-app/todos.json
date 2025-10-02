@@ -1,7 +1,7 @@
 [
     {
         "id": "e905e810-8512-4ab4-bad1-b1b0fa4c44cc",
-        "completed": false,
-        "text": "Learn CSS"
+        "completed": true,
+        "text": "Learn JS"
     }
 ]
