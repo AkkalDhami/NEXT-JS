@@ -1,8 +1,9 @@
 import todosData from "../../../todos.json";
 
-export function GET() {
+export function GET(req) {
+  console.log(req);
   //   return Response.json(todosData);
-  console.log(todosData);
+
   return new Response(JSON.stringify(todosData), {
     headers: {
       "Content-Type": "application/json",
