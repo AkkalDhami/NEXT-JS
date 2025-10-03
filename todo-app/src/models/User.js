@@ -30,14 +30,4 @@ const userSchema = new mongoose.Schema(
 
 userSchema.index({ email: 1 }, { unique: true });
 
-userSchema.pre("save", function (next) {
-  if (!this.isModified("password")) return next();
-  this.password = argon2.hash(this.password);
-  next();
-});
-
-userSchema.methods.isValidPassword = async function (password) {
-  return argon2.verify(this.password, password);
-};
-
 export default mongoose.models.User || mongoose.model("User", userSchema);

@@ -1,6 +1,8 @@
 import { connectDB } from "@/lib/db";
 import User from "@/models/User";
 
+import argon2 from "argon2";
+
 export async function POST(req) {
   try {
     await connectDB();
@@ -27,20 +29,24 @@ export async function POST(req) {
       );
     }
 
+    const hashedPassword = await argon2.hash(user.password);
 
     const newUser = new User({
       name: user.name,
       email: user.email,
-      password: user.password,
+      password: hashedPassword,
     });
 
     await newUser.save();
 
-    return Response.json({
-      success: true,
-      message: "User registered successfully",
-      user: newUser,
-    });
+    return Response.json(
+      {
+        success: true,
+        message: "User registered successfully",
+        user: newUser,
+      },
+      { status: 201 }
+    );
   } catch (error) {
     return Response.json(
       {

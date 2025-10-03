@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Layout from "@/components/Layout";
+import toast from "react-hot-toast";
 
 export default function Login() {
   const [formData, setFormData] = useState({
@@ -30,22 +31,25 @@ export default function Login() {
       // Simulate API call - replace with actual login logic
       console.log("Login data:", formData);
 
-      // For demo purposes, we'll just check if fields are filled
-      if (formData.email && formData.password) {
-        // Store user data in localStorage (for demo purposes)
-        const userData = {
-          email: formData.email,
-          isLoggedIn: true,
-        };
-        localStorage.setItem("user", JSON.stringify(userData));
-
-        // Redirect to dashboard
-        router.push("/");
+      const res = await fetch("/api/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+      const data = await res.json();
+      console.log(data);
+      if (!data?.success) {
+        toast.error(data.message);
       } else {
-        setError("Please fill in all fields");
+        toast.success(data.message);
+        router.push("/");
       }
     } catch (err) {
       setError("Login failed. Please check your credentials.");
+      console.error(err);
+      toast.error("Login failed. Please check your credentials.");
     } finally {
       setLoading(false);
     }
@@ -118,9 +122,7 @@ export default function Login() {
                 type="checkbox"
                 className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
               />
-              <label
-                htmlFor="remember-me"
-                className="ml-2 block text-sm">
+              <label htmlFor="remember-me" className="ml-2 block text-sm">
                 Remember me
               </label>
             </div>

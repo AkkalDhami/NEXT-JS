@@ -67,7 +67,7 @@ export default function Register() {
         toast.success(data.message);
       }
 
-      // router.push("/");
+      router.push("/login");
     } catch (err) {
       console.error(err);
       toast.error(err.message || "Registration failed. Please try again.");

@@ -5,7 +5,7 @@ import TodoList from "@/components/TodoList";
 import TodoForm from "@/components/TodoForm";
 import { useTheme } from "next-themes";
 import { MoonIcon, SunIcon } from "lucide-react";
-import { Toaster } from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
 
 export default function Home() {
   const [todos, setTodos] = useState([]);
@@ -16,9 +16,17 @@ export default function Home() {
   }, []);
 
   const fetchTodos = async () => {
-    const res = await fetch("/api/todos");
-    const data = await res.json();
-    setTodos(data.reverse());
+    try {
+      const res = await fetch("/api/todos");
+      const data = await res.json();
+      console.log(data);
+      // if (!data?.success) {
+      //   return toast.error(data.message);
+      // }
+      setTodos(data?.todos);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   // Add new todo
@@ -31,7 +39,12 @@ export default function Home() {
       body: JSON.stringify({ text }),
     });
     const data = await res.json();
-    setTodos([data, ...todos]);
+    console.log(data);
+    if (!data?.success) {
+      toast.error(data.message);
+    } else {
+      toast.success(data.message);
+    }
   };
 
   // Delete todo
@@ -39,12 +52,12 @@ export default function Home() {
     await fetch(`/api/todos/${id}`, {
       method: "DELETE",
     });
-    setTodos(todos.filter((todo) => todo?._id !== id));
+    setTodos(todos?.filter((todo) => todo?._id !== id));
   };
 
   // Toggle todo completion
   const toggleTodo = async (id) => {
-    const todo = todos.find((todo) => todo?._id === id);
+    const todo = todos?.find((todo) => todo?._id === id);
     await fetch(`/api/todos/${id}`, {
       method: "PUT",
       headers: {
@@ -53,7 +66,7 @@ export default function Home() {
       body: JSON.stringify({ completed: !todo.completed }),
     });
     setTodos(
-      todos.map((todo) =>
+      todos?.map((todo) =>
         todo?._id === id ? { ...todo, completed: !todo.completed } : todo
       )
     );
@@ -72,7 +85,6 @@ export default function Home() {
 
   return (
     <>
-     
       <div className="min-h-screen flex flex-col items-center py-8 px-4 sm:px-6">
         <div className="w-full max-w-lg">
           <header className="mb-8 flex justify-between items-center">

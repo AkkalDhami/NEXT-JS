@@ -4,9 +4,9 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import TodoItem from "./TodoItem ";
 
-const TodoList = ({ todos, deleteTodo, toggleTodo, updateTodo }) => {
+const TodoList = ({ todos = [], deleteTodo, toggleTodo, updateTodo }) => {
   const [filter, setFilter] = useState("all");
-
+  console.log(todos);
   const filteredTodos = todos.filter((todo) => {
     if (filter === "active") return !todo.completed;
     if (filter === "completed") return todo.completed;
