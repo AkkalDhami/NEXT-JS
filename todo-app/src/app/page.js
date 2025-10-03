@@ -5,6 +5,7 @@ import TodoList from "@/components/TodoList";
 import TodoForm from "@/components/TodoForm";
 import { useTheme } from "next-themes";
 import { MoonIcon, SunIcon } from "lucide-react";
+import { Toaster } from "react-hot-toast";
 
 export default function Home() {
   const [todos, setTodos] = useState([]);
@@ -15,14 +16,14 @@ export default function Home() {
   }, []);
 
   const fetchTodos = async () => {
-    const res = await fetch("/todos");
+    const res = await fetch("/api/todos");
     const data = await res.json();
     setTodos(data.reverse());
   };
 
   // Add new todo
   const addTodo = async (text) => {
-    const res = await fetch("/todos", {
+    const res = await fetch("/api/todos", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -35,7 +36,7 @@ export default function Home() {
 
   // Delete todo
   const deleteTodo = async (id) => {
-    await fetch(`/todos/${id}`, {
+    await fetch(`/api/todos/${id}`, {
       method: "DELETE",
     });
     setTodos(todos.filter((todo) => todo?._id !== id));
@@ -44,7 +45,7 @@ export default function Home() {
   // Toggle todo completion
   const toggleTodo = async (id) => {
     const todo = todos.find((todo) => todo?._id === id);
-    await fetch(`/todos/${id}`, {
+    await fetch(`/api/todos/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -60,7 +61,7 @@ export default function Home() {
 
   // Update todo
   const updateTodo = async (id, newText) => {
-    await fetch(`/todos/${id}`, {
+    await fetch(`/api/todos/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -70,35 +71,38 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center py-8 px-4 sm:px-6">
-      <div className="w-full max-w-lg">
-        <header className="mb-8 flex justify-between items-center">
-          <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-purple-600">
-            Todo App
-          </h1>
-          <button
-            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-            className="p-2 rounded-full hover:bg-muted transition-colors"
-            aria-label="Toggle theme">
-            {theme === "dark" ? (
-              <SunIcon className="h-5 w-5" />
-            ) : (
-              <MoonIcon className="h-5 w-5" />
-            )}
-          </button>
-        </header>
+    <>
+     
+      <div className="min-h-screen flex flex-col items-center py-8 px-4 sm:px-6">
+        <div className="w-full max-w-lg">
+          <header className="mb-8 flex justify-between items-center">
+            <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-purple-600">
+              Todo App
+            </h1>
+            <button
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+              className="p-2 rounded-full hover:bg-muted transition-colors"
+              aria-label="Toggle theme">
+              {theme === "dark" ? (
+                <SunIcon className="h-5 w-5" />
+              ) : (
+                <MoonIcon className="h-5 w-5" />
+              )}
+            </button>
+          </header>
 
-        <TodoForm addTodo={addTodo} />
+          <TodoForm addTodo={addTodo} />
 
-        <main className="mt-6">
-          <TodoList
-            todos={todos}
-            deleteTodo={deleteTodo}
-            toggleTodo={toggleTodo}
-            updateTodo={updateTodo}
-          />
-        </main>
+          <main className="mt-6">
+            <TodoList
+              todos={todos}
+              deleteTodo={deleteTodo}
+              toggleTodo={toggleTodo}
+              updateTodo={updateTodo}
+            />
+          </main>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
