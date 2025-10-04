@@ -6,6 +6,7 @@ import TodoForm from "@/components/TodoForm";
 import { useTheme } from "next-themes";
 import { LogOut, LucideUser, MoonIcon, SunIcon } from "lucide-react";
 import toast, { Toaster } from "react-hot-toast";
+import { redirect, RedirectType } from "next/navigation";
 
 export default function Home() {
   const [open, setOpen] = useState(false);
@@ -18,8 +19,22 @@ export default function Home() {
     email: "john@example.com",
   });
 
-  const handleLogout = () => {
-    console.log("User logged out");
+  const handleLogout = async () => {
+    try {
+      const res = await fetch("/api/logout", {
+        method: "POST",
+      });
+      const data = await res.json();
+      if (!data?.success) {
+        toast.error(data.message);
+      } else {
+        toast.success(data.message);
+        setUser({ name: "John Doe", email: "john@example.com" });
+      }
+      redirect("/login");
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   // Fix hydration issues with theme
@@ -61,9 +76,9 @@ export default function Home() {
 
       if (!data?.success) {
         toast.error(data.message);
+        router;
       } else {
         toast.success(data.message);
-        // Add to state immediately
         setTodos((prev) => [...prev, data.todo]);
       }
     } catch (err) {
