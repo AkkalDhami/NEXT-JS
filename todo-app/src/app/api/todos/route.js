@@ -18,22 +18,11 @@ export async function GET() {
 }
 
 export async function POST(req) {
-  const cookieStore = cookies();
   await connectDB();
 
-  const userId = await cookieStore.get("user")?.value;
-  console.log(userId);
-  const user = await User.findById(userId);
+  const user = await getLoggedInUser();
 
-  if (!user) {
-    return Response.json(
-      {
-        success: false,
-        message: "Please login first",
-      },
-      { status: 404 }
-    );
-  }
+  if (user instanceof Response) return user;
 
   const todo = await req.json();
 

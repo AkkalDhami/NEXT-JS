@@ -3,9 +3,11 @@ import User from "@/models/User";
 
 import argon2 from "argon2";
 import { cookies } from "next/headers";
+import crypto from "crypto";
+import { createHmacToken } from "@/lib/auth";
 
 export async function POST(req) {
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   try {
     await connectDB();
     const user = await req.json();
@@ -21,7 +23,7 @@ export async function POST(req) {
     }
 
     const existingUser = await User.findOne({ email: user.email });
-    console.log("Existing user:", existingUser);
+
     if (!existingUser) {
       return Response.json(
         {
@@ -47,7 +49,14 @@ export async function POST(req) {
       );
     }
 
-    cookieStore.set("user", existingUser?._id, {
+    const signature = createHmacToken(
+      existingUser._id.toString(),
+      process.env.COOKIE_SECRET
+    );
+
+    console.log({ signature });
+
+    cookieStore.set("user", `${signature}.${existingUser._id}`, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
@@ -69,6 +78,7 @@ export async function POST(req) {
       { status: 200 }
     );
   } catch (error) {
+    console.error(error);
     return Response.json(
       {
         success: false,
