@@ -9,9 +9,12 @@ import toast, { Toaster } from "react-hot-toast";
 
 export default function Home() {
   const [todos, setTodos] = useState([]);
-  const { theme = "dark", setTheme } = useTheme();
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
 
+  // Fix hydration issues with theme
   useEffect(() => {
+    setMounted(true);
     fetchTodos();
   }, []);
 
@@ -19,11 +22,7 @@ export default function Home() {
     try {
       const res = await fetch("/api/todos");
       const data = await res.json();
-      console.log(data);
-      // if (!data?.success) {
-      //   return toast.error(data.message);
-      // }
-      setTodos(data?.todos);
+      setTodos(data?.todos || []);
     } catch (err) {
       console.error(err);
     }
@@ -31,60 +30,80 @@ export default function Home() {
 
   // Add new todo
   const addTodo = async (text) => {
-    const res = await fetch("/api/todos", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ text }),
-    });
-    const data = await res.json();
-    console.log(data);
-    if (!data?.success) {
-      toast.error(data.message);
-    } else {
-      toast.success(data.message);
+    try {
+      const res = await fetch("/api/todos", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text }),
+      });
+      const data = await res.json();
+
+      if (!data?.success) {
+        toast.error(data.message);
+      } else {
+        toast.success(data.message);
+        // Add to state immediately
+        setTodos((prev) => [...prev, data.todo]);
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to add todo");
     }
   };
 
   // Delete todo
   const deleteTodo = async (id) => {
-    await fetch(`/api/todos/${id}`, {
-      method: "DELETE",
-    });
-    setTodos(todos?.filter((todo) => todo?._id !== id));
+    try {
+      await fetch(`/api/todos/${id}`, { method: "DELETE" });
+      setTodos((prev) => prev.filter((todo) => todo?._id !== id));
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   // Toggle todo completion
   const toggleTodo = async (id) => {
-    const todo = todos?.find((todo) => todo?._id === id);
-    await fetch(`/api/todos/${id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ completed: !todo.completed }),
-    });
-    setTodos(
-      todos?.map((todo) =>
-        todo?._id === id ? { ...todo, completed: !todo.completed } : todo
-      )
-    );
+    const todo = todos?.find((t) => t?._id === id);
+    if (!todo) return;
+
+    try {
+      await fetch(`/api/todos/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ completed: !todo.completed }),
+      });
+      setTodos((prev) =>
+        prev.map((t) => (t._id === id ? { ...t, completed: !t.completed } : t))
+      );
+    } catch (err) {
+      console.error(err);
+    }
   };
 
-  // Update todo
+  // Update todo text
   const updateTodo = async (id, newText) => {
-    await fetch(`/api/todos/${id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ text: newText }),
-    });
+    try {
+      const res = await fetch(`/api/todos/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text: newText }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setTodos((prev) =>
+          prev.map((t) => (t._id === id ? { ...t, text: newText } : t))
+        );
+      }
+    } catch (err) {
+      console.error(err);
+    }
   };
+
+  if (!mounted) return null; // prevent hydration mismatch
 
   return (
     <>
+      <Toaster position="top-right" />
       <div className="min-h-screen flex flex-col items-center py-8 px-4 sm:px-6">
         <div className="w-full max-w-lg">
           <header className="mb-8 flex justify-between items-center">

@@ -1,11 +1,15 @@
+import { getLoggedInUser } from "@/lib/auth";
 import { connectDB } from "@/lib/db";
 import Todo from "@/models/Todo";
 
 export async function GET(_, { params }) {
   await connectDB();
   const { id } = await params;
+  const user = await getLoggedInUser();
 
-  const todo = await Todo.findById(id);
+  if (user instanceof Response) return user;
+
+  const todo = await Todo.findOne({ _id: id, user: user._id });
 
   if (!todo) {
     return new Response(JSON.stringify({ message: "Todo Not Found" }), {
@@ -28,6 +32,10 @@ export async function PUT(req, { params }) {
   const { id } = await params;
   const todoFromReq = await req.json();
 
+  const user = await getLoggedInUser();
+
+  if (user instanceof Response) return user;
+
   if (todoFromReq.id) {
     return new Response(JSON.stringify({ message: "Cannot update todo id" }), {
       headers: {
@@ -37,9 +45,13 @@ export async function PUT(req, { params }) {
     });
   }
 
-  const todo = await Todo.findOneAndUpdate({ _id: id }, todoFromReq, {
-    new: true,
-  });
+  const todo = await Todo.findOneAndUpdate(
+    { _id: id, user: user._id },
+    todoFromReq,
+    {
+      new: true,
+    }
+  );
   if (!todo) {
     return new Response(JSON.stringify({ message: "Todo Not Found" }), {
       headers: {
@@ -64,8 +76,10 @@ export async function PUT(req, { params }) {
 
 export async function DELETE(req, { params }) {
   const { id } = await params;
+  const user = await getLoggedInUser();
+  if (user instanceof Response) return user;
 
-  const todo = await Todo.findOneAndDelete({ _id: id });
+  const todo = await Todo.findOneAndDelete({ _id: id, user: user._id });
 
   if (!todo) {
     return Response.json(

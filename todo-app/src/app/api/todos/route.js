@@ -1,26 +1,19 @@
+import { getLoggedInUser } from "@/lib/auth";
 import { connectDB } from "@/lib/db";
 import Todo from "@/models/Todo";
 import User from "@/models/User";
 import { cookies } from "next/headers";
-export async function GET(req) {
+export async function GET() {
   await connectDB();
-  const cookieStore = cookies();
-  const userId = await cookieStore.get("user")?.value;
+  const user = await getLoggedInUser();
 
-  if (!userId) {
-    return Response.json(
-      {
-        success: false,
-        message: "User not found",
-      },
-      { status: 404 }
-    );
+  if (user instanceof Response) {
+    return user;
   }
 
-  const user = await User.findOne({ _id: userId }).populate("todos");
   return Response.json({
     success: true,
-    todos: user?.todos,
+    todos: user?.todos || [],
   });
 }
 
@@ -36,7 +29,7 @@ export async function POST(req) {
     return Response.json(
       {
         success: false,
-        message: "User not found",
+        message: "Please login first",
       },
       { status: 404 }
     );
