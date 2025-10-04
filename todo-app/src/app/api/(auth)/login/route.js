@@ -5,6 +5,7 @@ import argon2 from "argon2";
 import { cookies } from "next/headers";
 import crypto from "crypto";
 import { createHmacToken } from "@/lib/auth";
+import Session from "@/models/Session";
 
 export async function POST(req) {
   const cookieStore = await cookies();
@@ -48,15 +49,16 @@ export async function POST(req) {
         { status: 400 }
       );
     }
+    const session = await Session.create({
+      userId: existingUser._id,
+    });
 
     const signature = createHmacToken(
-      existingUser._id.toString(),
+      session._id.toString(),
       process.env.COOKIE_SECRET
     );
 
-    console.log({ signature });
-
-    cookieStore.set("user", `${signature}.${existingUser._id}`, {
+    cookieStore.set("user", `${signature}.${session._id}`, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
