@@ -1,134 +1,108 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import toast from "react-hot-toast";
+import { z } from "zod/v4";
 import { registerUser } from "@/actions/auth";
 import { registerSchema } from "@/validators/auth";
 
-export default function Register() {
-  const [state, formAction, isPending] = useActionState(registerUser);
-
-  const [formData, setFormData] = useState({
-    name: "test",
-    email: "test@test.com",
-    password: "test@test.com",
-    confirmPassword: "test@test.com",
-  });
-  const [error, setError] = useState("");
+export default function RegisterPage() {
   const router = useRouter();
+  const [state, formAction, isPending] = useActionState(registerUser, {});
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
+  const [name, setName] = useState("Test");
+  const [email, setEmail] = useState("test@test.com");
+  const [password, setPassword] = useState("test@test.com");
+
+  const [errors, setErrors] = useState({});
+
+  useEffect(() => {
+    setErrors(state.errors);
+  }, [state.errors]);
 
   const handleFormAction = async (formData) => {
-    const { success, error, data } = registerSchema.safeParse(formData);
-    console.log(error);
-    if (!success) return setError(error.message);
-    console.log(data);
+    const newUser = {
+      name: formData.get("name"),
+      email: formData.get("email"),
+      password: formData.get("password"),
+    };
+
+    const { success, data, error } = registerSchema.safeParse(newUser);
+
+    if (!success) {
+      return setErrors(z.flattenError(error).fieldErrors);
+    }
+
+    setErrors({});
     return formAction(data);
   };
 
-  toast.error(state?.error);
   return (
-    <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold">
-            Create your account
-          </h2>
-          <p className="mt-2 text-center text-sm">
-            Or{" "}
-            <Link
-              href="/login"
-              className="font-medium text-blue-600 hover:text-blue-500">
-              sign in to your existing account
-            </Link>
-          </p>
-        </div>
-        <form className="mt-8 space-y-6" action={handleFormAction}>
-          {error && (
-            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-              {error}
-            </div>
-          )}
-
-          <div className="rounded-md space-y-4">
-            <div>
-              <label htmlFor="name" className="sr-only">
-                Full Name
-              </label>
-              <input
-                id="name"
-                name="name"
-                type="text"
-                className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-600 placeholder-gray-500  focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-                placeholder="Full Name"
-                value={formData.name}
-                onChange={handleChange}
-              />
-            </div>
-            <div>
-              <label htmlFor="email" className="sr-only">
-                Email address
-              </label>
-              <input
-                id="email"
-                name="email"
-                type="text"
-                autoComplete="email"
-                className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-600 placeholder-gray-500  focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-                placeholder="Email address"
-                value={formData.email}
-                onChange={handleChange}
-              />
-            </div>
-            <div>
-              <label htmlFor="password" className="sr-only">
-                Password
-              </label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                autoComplete="new-password"
-                className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-600 placeholder-gray-500  focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-                placeholder="Password"
-                value={formData.password}
-                onChange={handleChange}
-              />
-            </div>
-            <div>
-              <label htmlFor="confirmPassword" className="sr-only">
-                Confirm Password
-              </label>
-              <input
-                id="confirmPassword"
-                name="confirmPassword"
-                type="password"
-                autoComplete="new-password"
-                className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-600 placeholder-gray-500  focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-                placeholder="Confirm Password"
-                value={formData.confirmPassword}
-                onChange={handleChange}
-              />
-            </div>
-          </div>
-
+    <div className="min-h-screen flex flex-col items-center py-8 px-4 sm:px-6">
+      <div className="w-full max-w-lg">
+        <header className="mb-8 flex justify-between items-center">
+          <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-purple-600">
+            Todo App
+          </h1>
+        </header>
+        <h2 className="text-2xl font-semibold mb-4">Register</h2>
+        <form action={handleFormAction} className="space-y-4" noValidate>
           <div>
-            <button
-              type="submit"
-              disabled={isPending}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50">
-              {isPending ? "Creating account..." : "Create account"}
-            </button>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              Name
+            </label>
+            <input
+              type="text"
+              className="mt-1 w-full px-4 py-2 border rounded-md bg-white dark:bg-gray-900 dark:text-white"
+              name="name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+            />
+            <p className="text-xs text-red-500 -mb-2">{errors?.name}</p>
           </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              Email
+            </label>
+            <input
+              type="email"
+              name="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="mt-1 w-full px-4 py-2 border rounded-md bg-white dark:bg-gray-900 dark:text-white"
+              required
+            />
+            <p className="text-xs text-red-500 -mb-2">{errors?.email}</p>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              Password
+            </label>
+            <input
+              type="password"
+              name="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="mt-1 w-full px-4 py-2 border rounded-md bg-white dark:bg-gray-900 dark:text-white"
+              required
+            />
+            <p className="text-xs text-red-500 -mb-2">{errors?.password}</p>
+          </div>
+          <button
+            type="submit"
+            className="w-full bg-blue-500 mt-2 text-white py-2 rounded-md font-medium hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={isPending}>
+            Register
+          </button>
         </form>
+        <p className="mt-4 text-center text-sm text-gray-600 dark:text-gray-400">
+          Already have an account?{" "}
+          <Link href="/login" className="text-blue-500 hover:underline">
+            Login
+          </Link>
+        </p>
       </div>
     </div>
   );
