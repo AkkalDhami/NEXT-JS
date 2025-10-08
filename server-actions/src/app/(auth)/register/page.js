@@ -4,8 +4,11 @@ import { useActionState, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { z } from "zod/v4";
+import argon2 from "argon2";
 import { registerUser } from "@/actions/auth";
 import { registerSchema } from "@/validators/auth";
+import { connectDB } from "@/lib/db";
+import User from "@/models/User";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -32,6 +35,55 @@ export default function RegisterPage() {
 
     if (!success) {
       return setErrors(z.flattenError(error).fieldErrors);
+    }
+
+    try {
+      await connectDB();
+      const user = await req.json();
+
+      if (!user.name || !user.email || !user.password) {
+        return {
+          success: false,
+        };
+      }
+
+      const existingUser = await User.findOne({ email: user.email });
+      if (existingUser) {
+        return Response.json(
+          {
+            success: false,
+            message: "User with this email already exists",
+          },
+          { status: 400 }
+        );
+      }
+
+      const hashedPassword = await argon2.hash(user.password);
+
+      const newUser = new User({
+        name: user.name,
+        email: user.email,
+        password: hashedPassword,
+      });
+
+      await newUser.save();
+
+      return Response.json(
+        {
+          success: true,
+          message: "User registered successfully",
+          user: newUser,
+        },
+        { status: 201 }
+      );
+    } catch (error) {
+      return Response.json(
+        {
+          success: false,
+          message: error.message,
+        },
+        { status: 500 }
+      );
     }
 
     setErrors({});
