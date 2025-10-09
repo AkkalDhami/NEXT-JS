@@ -4,25 +4,28 @@ import { useActionState, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { z } from "zod/v4";
-import argon2 from "argon2";
 import { registerUser } from "@/actions/auth";
 import { registerSchema } from "@/validators/auth";
-import { connectDB } from "@/lib/db";
-import User from "@/models/User";
+import toast from "react-hot-toast";
 
 export default function RegisterPage() {
   const router = useRouter();
   const [state, formAction, isPending] = useActionState(registerUser, {});
 
-  const [name, setName] = useState("Test");
-  const [email, setEmail] = useState("test@test.com");
-  const [password, setPassword] = useState("test@test.com");
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
-    setErrors(state.errors);
-  }, [state.errors]);
+    if (state?.success) {
+      toast.success(state.message);
+      router.push("/login");
+    } else {
+      setErrors(state.errors);
+    }
+  }, [state, router]);
 
   const handleFormAction = async (formData) => {
     const newUser = {
@@ -36,56 +39,6 @@ export default function RegisterPage() {
     if (!success) {
       return setErrors(z.flattenError(error).fieldErrors);
     }
-
-    try {
-      await connectDB();
-      const user = await req.json();
-
-      if (!user.name || !user.email || !user.password) {
-        return {
-          success: false,
-        };
-      }
-
-      const existingUser = await User.findOne({ email: user.email });
-      if (existingUser) {
-        return Response.json(
-          {
-            success: false,
-            message: "User with this email already exists",
-          },
-          { status: 400 }
-        );
-      }
-
-      const hashedPassword = await argon2.hash(user.password);
-
-      const newUser = new User({
-        name: user.name,
-        email: user.email,
-        password: hashedPassword,
-      });
-
-      await newUser.save();
-
-      return Response.json(
-        {
-          success: true,
-          message: "User registered successfully",
-          user: newUser,
-        },
-        { status: 201 }
-      );
-    } catch (error) {
-      return Response.json(
-        {
-          success: false,
-          message: error.message,
-        },
-        { status: 500 }
-      );
-    }
-
     setErrors({});
     return formAction(data);
   };
@@ -146,7 +99,7 @@ export default function RegisterPage() {
             type="submit"
             className="w-full bg-blue-500 mt-2 text-white py-2 rounded-md font-medium hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
             disabled={isPending}>
-            Register
+            {isPending ? "Loading..." : "Register"}
           </button>
         </form>
         <p className="mt-4 text-center text-sm text-gray-600 dark:text-gray-400">

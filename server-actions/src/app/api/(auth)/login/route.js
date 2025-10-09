@@ -1,7 +1,7 @@
 import { connectDB } from "@/lib/db";
 import User from "@/models/User";
 
-import argon2 from "argon2";
+import bcrypt from "bcryptjs";
 import { cookies } from "next/headers";
 import crypto from "crypto";
 import { createHmacToken } from "@/lib/auth";
@@ -35,9 +35,9 @@ export async function POST(req) {
       );
     }
 
-    const isValidPassword = await argon2.verify(
-      existingUser.password,
-      user.password
+    const isValidPassword = await bcrypt.compare(
+      user.password,
+      existingUser.password
     );
 
     if (!isValidPassword) {

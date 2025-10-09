@@ -1,7 +1,7 @@
 import { connectDB } from "@/lib/db";
 import User from "@/models/User";
 
-import argon2 from "argon2";
+import bcrypt from "bcryptjs";
 
 export async function POST(req) {
   try {
@@ -29,7 +29,7 @@ export async function POST(req) {
       );
     }
 
-    const hashedPassword = await argon2.hash(user.password);
+    const hashedPassword = await bcrypt.hash(user.password, 12);
 
     const newUser = new User({
       name: user.name,
