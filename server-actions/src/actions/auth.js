@@ -66,3 +66,54 @@ export async function registerUser(_, formData) {
     }
   }
 }
+
+export async function loginUser(_, formData) {
+  await connectDB();
+  const { email, password } = formData;
+  try {
+    if (!email || !password) {
+      return {
+        success: false,
+        message: "Please fill in all fields",
+      };
+    }
+
+    const existingUser = await User.findOne({ email });
+
+    if (!existingUser) {
+      return {
+        success: false,
+        message: "Invalid credentials",
+      };
+    }
+
+    const isValidPassword = await bcrypt.compare(
+      password,
+      existingUser.password
+    );
+
+    if (!isValidPassword) {
+      return {
+        success: false,
+        message: "Invalid credentials",
+      };
+    }
+
+    return {
+      success: true,
+      message: "User logged in successfully",
+      user: {
+        name: existingUser.name,
+        email: existingUser.email,
+        _id: existingUser._id,
+        todos: existingUser.todos,
+      },
+    };
+  } catch (error) {
+    console.error(error);
+    return {
+      success: false,
+      message: "Something went wrong",
+    };
+  }
+}
