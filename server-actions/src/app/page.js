@@ -7,6 +7,7 @@ import { useTheme } from "next-themes";
 import { LogOut, LucideUser, MoonIcon, SunIcon } from "lucide-react";
 import toast, { Toaster } from "react-hot-toast";
 import { redirect, RedirectType } from "next/navigation";
+import { logoutUser } from "@/actions/auth";
 
 export default function Home() {
   const [open, setOpen] = useState(false);
@@ -21,17 +22,14 @@ export default function Home() {
 
   const handleLogout = async () => {
     try {
-      const res = await fetch("/api/logout", {
-        method: "POST",
-      });
-      const data = await res.json();
-      if (!data?.success) {
-        toast.error(data.message);
-      } else {
-        toast.success(data.message);
+      const res = await logoutUser();
+      if (res?.success) {
+        toast.success(res.message);
         setUser({ name: "John Doe", email: "john@example.com" });
+        redirect("/login");
+      } else {
+        toast.error(res.message);
       }
-      redirect("/login");
     } catch (err) {
       console.error(err);
     }

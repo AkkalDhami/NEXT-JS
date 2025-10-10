@@ -5,6 +5,9 @@ import bcrypt from "bcryptjs";
 import { connectDB } from "@/lib/db";
 import { registerSchema } from "@/validators/auth";
 import z from "zod";
+import Session from "@/models/Session";
+import { cookies } from "next/headers";
+import { createHmacToken } from "@/lib/auth";
 
 export async function registerUser(_, formData) {
   await connectDB();
@@ -44,12 +47,6 @@ export async function registerUser(_, formData) {
     return {
       success: true,
       message: "User registered successfully",
-      user: {
-        name: newUser.name,
-        email: newUser.email,
-        _id: newUser._id,
-        todos: newUser.todos,
-      },
     };
   } catch (error) {
     console.error(error);
@@ -69,6 +66,7 @@ export async function registerUser(_, formData) {
 
 export async function loginUser(_, formData) {
   await connectDB();
+  const cookieStore = await cookies();
   const { email, password } = formData;
   try {
     if (!email || !password) {
@@ -98,16 +96,26 @@ export async function loginUser(_, formData) {
         message: "Invalid credentials",
       };
     }
+    const session = await Session.create({
+      userId: existingUser._id,
+    });
+
+    const signature = createHmacToken(
+      session._id.toString(),
+      process.env.COOKIE_SECRET
+    );
+
+    cookieStore.set("user", `${signature}.${session._id}`, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 60 * 60 * 24 * 7,
+      path: "/",
+    });
 
     return {
       success: true,
       message: "User logged in successfully",
-      user: {
-        name: existingUser.name,
-        email: existingUser.email,
-        _id: existingUser._id,
-        todos: existingUser.todos,
-      },
     };
   } catch (error) {
     console.error(error);
@@ -116,4 +124,25 @@ export async function loginUser(_, formData) {
       message: "Something went wrong",
     };
   }
+}
+
+export async function logoutUser() {
+  await connectDB();
+  const cookieStore = await cookies();
+
+  const sessionId = cookieStore.get("user")?.value.split(".")[1];
+  cookieStore.delete("user");
+  const session = await Session.findOneAndDelete({ _id: sessionId });
+  console.log({ session, sessionId });
+  if (!session) {
+    return {
+      success: false,
+      message: "Session not found",
+    };
+  }
+
+  return {
+    success: true,
+    message: "User logged out successfully",
+  };
 }
