@@ -11,7 +11,7 @@ export function middleware(request) {
     }
   } else {
     if (!isPublic) {
-      return NextResponse.redirect(new URL("/login", request.url));
+      return NextResponse.rewrite(new URL("/login", request.url));
     }
   }
 }
